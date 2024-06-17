@@ -13,7 +13,7 @@
 
 <section class="mb-5 py-5">
     <div class="bg-dark text-light container py-4">
-        <form action="{{ route('admin.projects.update', $project) }}" method="POST">
+        <form action="{{ route('admin.projects.update', $project) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -29,6 +29,12 @@
                 <label for="link" class="form-label fw-bold">Link</label>
                 <input type="text" class="form-control" id="link" name="link" placeholder="Insert your link's project"
                     value="{{ old('link', $project->link) }}">
+            </div>
+
+            <!-- Image Upload -->
+            <div class="mb-3">
+                <label for="cover_image" class="form-label">Upload File</label>
+                <input class="form-control" type="file" name="cover_image" id="cover_image">
             </div>
 
             <!-- Date of Creation -->

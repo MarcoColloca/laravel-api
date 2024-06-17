@@ -12,7 +12,7 @@
 
 <section class="mb-5 py-5">
     <div class="bg-dark text-light container py-4">
-        <form action="{{ route('admin.projects.store') }}" method="POST">
+        <form action="{{ route('admin.projects.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-3">
@@ -27,10 +27,19 @@
                     value="{{ old('link') }}">
             </div>
 
+
+            <div class="mb-3">
+                <label for="cover_image" class="form-label">Upload File</label>
+                <input class="form-control" type="file" name="cover_image" id="cover_image">
+            </div>
+
+
+
+
             <div class="mb-3">
                 <label for="date_of_creation" class="form-label fw-bold">Date of Creation</label>
-                <input type="date" class="form-control" id="date_of_creation" name="date_of_creation" placeholder="Insert date"
-                    value="{{ old('date_of_creation') }}">
+                <input type="date" class="form-control" id="date_of_creation" name="date_of_creation"
+                    placeholder="Insert date" value="{{ old('date_of_creation') }}">
             </div>
 
             <div class="mb-3">
@@ -38,7 +47,7 @@
                 <select class="form-select" id="type" name="type" aria-label="Floating label select example">
                     <option selected value="0">Public</option>
                     <option value="1">Private</option>
-                </select>        
+                </select>
             </div>
 
             <div class="form-group mb-3">
@@ -55,23 +64,25 @@
                 <label class="form-label fw-bold" for="technology_id">Select Project technologies</label>
 
                 <div class="d-flex gap-2">
-                                        
+
                     @foreach ($technologies as $technology)                        
                         <div class="form-check ">
-                            <input @checked( in_array($technology->id, old('technologies', []))) name="technologies[]" class="form-check-input" type="checkbox" value="{{$technology->id}}" id="technology-{{$technology->id}}">
+                            <input @checked(in_array($technology->id, old('technologies', []))) name="technologies[]"
+                                class="form-check-input" type="checkbox" value="{{$technology->id}}"
+                                id="technology-{{$technology->id}}">
                             <label class="form-check-label" for="technology-{{$technology->id}}">
                                 {{$technology->name}}
                             </label>
                         </div>
                     @endforeach
-                </div>                    
+                </div>
             </div>
 
 
             <div class="mb-3">
                 <label for="contributors" class="form-label fw-bold">Contributors</label>
-                <input type="number" class="form-control" id="contributors" name="contributors" placeholder="Insert value"
-                    value="{{ old('contributors') }}">
+                <input type="number" class="form-control" id="contributors" name="contributors"
+                    placeholder="Insert value" value="{{ old('contributors') }}">
             </div>
 
             <div class="mb-3">
@@ -83,8 +94,7 @@
 
             <div class="mb-3">
                 <label for="description" class="form-label fw-bold">Description</label>
-                <textarea class="form-control" id="description" name="description"
-                    placeholder="Describe your project">{{old('description')}}
+                <textarea class="form-control" id="description" name="description" placeholder="Describe your project">{{old('description')}}
                 </textarea>
             </div>
 
