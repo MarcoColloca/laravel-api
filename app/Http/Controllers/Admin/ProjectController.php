@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Technology;
 use App\Models\Type;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
@@ -113,6 +114,16 @@ class ProjectController extends Controller
 
         //dd($new_project);
 
+        if($request->hasFile('cover_image'))
+        {
+            $image_path = Storage::disk('public')->put('cover_images', $request->cover_image);
+
+            // dd($image_path);
+
+            $new_project->cover_image =  $image_path;
+        }
+
+
         $new_project->save();
 
         if($request->has('technologies'))
@@ -167,6 +178,27 @@ class ProjectController extends Controller
 
         $project->fill($form_data);
         $project->slug = Project::getUniqueSlug($project->name);
+
+
+
+        if($request->hasFile('cover_image'))
+        {
+            
+            $image_path = Storage::disk('public')->put('cover_images', $request->cover_image);
+
+            // dd($image_path);
+
+            // Se esiste la proprietà 
+            if($project->cover_image){
+                // eliminare il file $post->cover_image
+                Storage::disk('public')->delete($project->cover_image);
+            }
+
+            $project->cover_image =  $image_path;
+        }
+
+
+
 
         $project->save();
 
