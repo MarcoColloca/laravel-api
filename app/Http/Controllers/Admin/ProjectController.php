@@ -183,14 +183,14 @@ class ProjectController extends Controller
 
         if($request->hasFile('cover_image'))
         {
-            
+
             $image_path = Storage::disk('public')->put('cover_images', $request->cover_image);
 
             // dd($image_path);
 
             // Se esiste la proprietà 
             if($project->cover_image){
-                // eliminare il file $post->cover_image
+                // eliminare il file $project->cover_image
                 Storage::disk('public')->delete($project->cover_image);
             }
 
