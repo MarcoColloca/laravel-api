@@ -9,6 +9,9 @@
 
         <div class="row pb-5 w-100 justify-content-center">
             <div class="card p-5 my-card">
+                @if ($project->cover_image)
+                    <img src="{{asset('storage/' . $project->cover_image)}}" alt="">
+                @endif
                 <p>
                     <span class="fw-bold">Created:</span> {{$project->date_of_creation}}
                 </p>
