@@ -23,56 +23,67 @@ class ProjectController extends Controller
     public function index(Request $request)
     {
 
+
         $types = Type::orderBy('name', 'asc')->get();
         $technologies = Technology::orderBy('name', 'asc')->get();
 
-        //$projects = Project::all();
-        $query = Project::with(['type', 'type.projects']); // 3 query. la 1° prende i project, la 2° prende i tipi associati a quel project, la 3° prende tutti i progetti associati al tipo indicato
 
-
-
-        $filters = $request->all();
-        
-        // dump($filters);
-
-        if(isset($filters['project_status'])) 
-        {
-            $query->where('is_public', $filters['project_status']);
-        }
-
-
-
-
-        if(isset($filters['type_id']) && $filters['type_id'] === 'none')
-        {
-            $query->where('type_id', null);
-        }
-        elseif(isset($filters['type_id']))
-        {
-            $query->where('type_id', $filters['type_id']);
-        }
+        if($request->has('trash')){
+            $projects = Project::onlyTrashed()->with(['type', 'type.projects'])->get();
             
+        } else{
+
+            //$projects = Project::all();
+            $query = Project::with(['type', 'type.projects']); // 3 query. la 1° prende i project, la 2° prende i tipi associati a quel project, la 3° prende tutti i progetti associati al tipo indicato
+    
+    
+    
+            $filters = $request->all();
             
-
-
-        if(isset($filters['technologies']))
-        {
-            $query->whereHas('technologies', function (Builder $query) use($filters) {
-
-                $query->whereIn('id', $filters['technologies']);
+            // dump($filters);
+    
+            if(isset($filters['project_status'])) 
+            {
+                $query->where('is_public', $filters['project_status']);
+            }
+    
+    
+    
+    
+            if(isset($filters['type_id']) && $filters['type_id'] === 'none')
+            {
+                $query->where('type_id', null);
+            }
+            elseif(isset($filters['type_id']))
+            {
+                $query->where('type_id', $filters['type_id']);
+            }
                 
-            });
+                
+    
+    
+            if(isset($filters['technologies']))
+            {
+                $query->whereHas('technologies', function (Builder $query) use($filters) {
+    
+                    $query->whereIn('id', $filters['technologies']);
+                    
+                });
+            }
+    
+    
+            // $public_projects = Project::where('is_public', '=' ,0)->get();
+    
+            // $private_projects = Project::where('is_public', 1)->get();
+            
+    
+            $projects = $query->get();
         }
 
-
-        // $public_projects = Project::where('is_public', '=' ,0)->get();
-
-        // $private_projects = Project::where('is_public', 1)->get();
+        $trashed = Project::onlyTrashed()->count();
 
 
-        $projects = $query->get();
-
-        return view('admin.projects.index', compact('projects', 'types', 'technologies'));
+        return view('admin.projects.index', compact('projects', 'types', 'technologies', 'trashed'));
     }
 
     /**
@@ -231,6 +242,39 @@ class ProjectController extends Controller
     {
         $project->delete();
 
+        // if($project->trashed())
+        // {
+        //     $project->
+        // }
+
         return to_route('admin.projects.index');
+    }
+
+
+    public function restore($id)
+    {
+        // dd($id);
+        $project = Project::withTrashed()->find($id);
+        if($project->trashed())
+        {
+            $project->restore();
+        }
+
+        return back();
+    }
+
+
+    public function forceDestroy($id)
+    {
+
+        $project = Project::withTrashed()->find($id);
+        
+        
+        if($project->trashed())
+        {
+            $project->forceDelete();
+        }
+        
+        return back();
     }
 }
