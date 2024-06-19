@@ -54,9 +54,12 @@ class ProjectSeeder extends Seeder
         for ($i=0; $i < 10 ; $i++) { 
 
             list($contributors_number, $contributors_list) = $this->fakeContributors($faker);
+           
+
 
             # code...
             $project = new Project();
+
 
             $project->name = $faker->sentence(3);
             $project->slug = Str::slug($project->name);
@@ -73,6 +76,9 @@ class ProjectSeeder extends Seeder
             $project->save();            
 
             // QUI il Project è stato salvato ed HA un id
+            if(rand(1, 100) > 75){
+                $project->delete();
+            }
 
 
             // prendendo un numero random (grazie a null), di id random appartenenti ai technologies
