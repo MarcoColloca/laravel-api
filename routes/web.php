@@ -41,7 +41,13 @@ Route::middleware(['auth', 'verified'])
 
     // Registrare tutte le altre rotte protette. Nel nostro caso aggiungeremo la CRUD sui POSTS
     Route::resource('projects', ProjectController::class);
+    Route::delete('projects/{project}/forceDestroy', [ProjectController::class, 'forceDestroy'])->name('projects.forceDestroy');
+    Route::post('projects/{project}/restore', [ProjectController::class, 'restore'])->name('projects.restore');
+
+
+
     Route::resource('types', TypeController::class);
+
     Route::resource('technologies', TechnologyController::class);
 });
 
