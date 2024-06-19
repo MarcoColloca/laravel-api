@@ -93,9 +93,9 @@
                         <td>{{$project->type?->name ? $project->type->name : ''}}</td>
                         <td>{{implode(', ', $project->technologies->pluck('name')->all())}}</td>
                         <td class="text-center">{{$project->contributors}}</td>
-                        <td class="text-center"><a class="text-success"
+                        <td class="text-center">
                             @if(!$project->trashed())
-                                href="{{route('admin.projects.show', $project)}}">Info</a>
+                            <a class="text-success" href="{{route('admin.projects.show', $project)}}">Info</a>
                             @endif
                         </td>
                         <td class="text-center">
@@ -110,8 +110,8 @@
 
                                     <div class="my-modal">
                                         <div class="my-modal__box">
-                                            <h5 class="text-center me-5">Do you really want to restore this Project?!</h5>
-                                            <span class="link link-danger my-modal-yes mx-5">Yes</span>
+                                            <h5 class="text-center text-warning me-5">Do you really want to restore this Project?</h5>
+                                            <span class="link link-warning my-modal-yes mx-5">Yes</span>
                                             <span class="link link-success my-modal-no">No</span>
                                         </div>
                                     </div>
