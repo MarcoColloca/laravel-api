@@ -5,8 +5,19 @@
 <section class="mb-5 py-5 bg-purple">
     <div class="bg-light container py-4 projects-cotnainer">
 
-        <h1 class="my-4 text-center text-danger"> My Projects</h1>
+        <div>
+            <h1 class="my-4 text-center text-danger"> My Projects</h1>
+            
+            <p>
+                @if(request('trash'))
+                    <a class="btn btn-outline-dark text-decoration-none" href="{{route('admin.projects.index')}}">Projects</a>
+                @else
+                    <a class="btn btn-outline-dark text-decoration-none" href="{{route('admin.projects.index', ['trash' => 1])}}">Trash {{$trashed}}</a>
+                @endif
+            </p>
+        </div>
 
+        @if(!request('trash'))
         <div class="projects-filter">
             <form action="{{route('admin.projects.index')}}" method="GET">
 
@@ -52,9 +63,13 @@
                 <button class="btn btn-dark">Filtra</button>
             </form>
         </div>
+        @endif
+
+        @if(!request('trash'))
         <div class="text-end me-3">
-            <a class="btn btn-dark mb-5" href="{{route('admin.projects.create')}}">Aggiungi Progetto</a>
+            <a class="btn btn-dark mb-5" href="{{route('admin.projects.create')}}">Add Project</a>
         </div>
+        @endif
 
         <table class="table table-dark table-hover table-bordered">
             <thead>
@@ -64,8 +79,8 @@
                     <th colspan="2" scope="col">Type of Project</th>
                     <th scope="col">Technologies</th>
                     <th scope="col">Contributors</th>
-                    <th scope="col">More Info</th>
-                    <th scope="col">Modify</th>
+                    <th scope="col">Info</th>                    
+                    <th scope="col">Modify</th>                    
                     <th scope="col">Delete</th>
                 </tr>
             </thead>
@@ -79,11 +94,33 @@
                         <td>{{implode(', ', $project->technologies->pluck('name')->all())}}</td>
                         <td class="text-center">{{$project->contributors}}</td>
                         <td class="text-center"><a class="text-success"
-                                href="{{route('admin.projects.show', $project)}}">Info</a></td>
-                        <td class="text-center"><a class="text-primary"
-                                href="{{route('admin.projects.edit', $project)}}">Edit</a></td>
+                            @if(!$project->trashed())
+                                href="{{route('admin.projects.show', $project)}}">Info</a>
+                            @endif
+                        </td>
                         <td class="text-center">
-                            <form class="item-delete-form" action="{{ route('admin.projects.destroy', $project) }}"
+                            {{-- Nascosto nel Cestino --}}
+                            @if(!$project->trashed())
+                                <a class="text-primary" href="{{route('admin.projects.edit', $project)}}">Edit</a>
+                            @elseif($project->trashed())
+                                <form class="item-delete-form" action="{{ route('admin.projects.restore', $project)}}"
+                                    method="POST">
+                                    @csrf
+                                    <button class="btn link-warning">Restore</button>
+
+                                    <div class="my-modal">
+                                        <div class="my-modal__box">
+                                            <h5 class="text-center me-5">Do you really want to restore this Project?!</h5>
+                                            <span class="link link-danger my-modal-yes mx-5">Yes</span>
+                                            <span class="link link-success my-modal-no">No</span>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            <form class="item-delete-form" action="{{ !$project->trashed() ? route('admin.projects.destroy', $project) : route('admin.projects.forceDestroy', $project)}}"
                                 method="POST">
                                 @csrf
                                 @method('DELETE')
